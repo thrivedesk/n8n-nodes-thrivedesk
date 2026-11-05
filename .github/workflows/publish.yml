@@ -29,7 +29,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*' # npm >= 11.5 is needed for OIDC trusted publishing
+          node-version: '24' # npm >= 11.5 for OIDC trusted publishing; not 26 (isolated-vm dev dep fails to build)
           registry-url: 'https://registry.npmjs.org'
           cache: 'npm'
 
