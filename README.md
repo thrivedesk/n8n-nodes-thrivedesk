@@ -8,31 +8,21 @@ ThriveDesk is a help desk platform for managing customer conversations across sh
 
 ## Installation
 
-Follow the [community nodes installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n docs.
+This node is available on **n8n Cloud**. In your n8n workspace, open the nodes panel, search for
+**ThriveDesk**, and add it to your workflow.
 
-- **n8n Cloud / self-hosted (verified):** once this node is verified, search for `n8n-nodes-thrivedesk` in **Settings → Community Nodes**.
-- **Manual (self-hosted):** `npm install n8n-nodes-thrivedesk` in your n8n custom nodes directory.
+> **Self-hosted n8n is not supported.** The node connects through ThriveDesk's own OAuth app, which
+> n8n Cloud manages for you. ThriveDesk does not issue OAuth client IDs or secrets to individual
+> users, so a self-hosted n8n instance cannot complete the connection.
 
 ## Authentication
 
-This node authenticates with **OAuth2** (authorization code) against the ThriveDesk partner API.
+The node uses **OAuth2**, managed by n8n Cloud — there is no client ID, secret, or redirect URL to
+configure.
 
 1. In n8n, create a new **ThriveDesk OAuth2 API** credential.
-2. Copy the **OAuth Redirect URL** shown in the credential UI.
-3. Register that exact redirect URL on your ThriveDesk partner OAuth client.
-4. Paste the **Client ID** and **Client Secret** from the partner client into n8n.
-5. Click **Connect** and authorize the requested scopes.
-
-### OAuth Redirect URL
-
-n8n fixes the redirect (callback) URL — it's always `<your-n8n-host>/rest/oauth2-credential/callback`. This is the value ThriveDesk uses as the OAuth redirect; register it on the partner client exactly as shown in the n8n credential UI.
-
-| Environment | Redirect URL |
-| --- | --- |
-| Local (default) | `http://localhost:5678/rest/oauth2-credential/callback` |
-| Production | `https://<your-n8n-domain>/rest/oauth2-credential/callback` |
-
-> The host/port must match your actual n8n instance. If you set `N8N_HOST`, `N8N_PORT`, `N8N_PROTOCOL`, or `WEBHOOK_URL`, the callback URL changes accordingly — always copy the exact value from the credential UI.
+2. Click **Connect my account**.
+3. Sign in to ThriveDesk and approve the requested permissions.
 
 On connect, n8n calls `POST /v1/apps/n8n/install` to confirm the connection. That single call both
 verifies the freshly issued token and auto-installs the ThriveDesk app for your organization — the
@@ -73,7 +63,7 @@ Assigned, **status** on Created and Status Updated, **tags** on Created and Tags
 
 ## Compatibility
 
-Requires n8n with `n8nNodesApiVersion` 1. Node.js >= 20.15.
+n8n Cloud only (see [Installation](#installation)). Requires `n8nNodesApiVersion` 1.
 
 ## Development
 
