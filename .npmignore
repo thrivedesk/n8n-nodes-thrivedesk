@@ -1,0 +1,7 @@
+# Only the compiled dist/ ships (enforced by package.json "files").
+# This list is a belt-and-suspenders guard for everything else.
+*
+!dist/**
+!package.json
+!LICENSE
+!README.md

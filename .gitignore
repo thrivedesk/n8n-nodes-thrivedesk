@@ -1,0 +1,12 @@
+node_modules/
+dist/
+*.log
+npm-debug.log*
+.DS_Store
+.env
+.env.*
+.tmp/
+coverage/
+
+# local OAuth client overwrite (never commit — holds the real secret)
+.credentials-overwrite.local.json

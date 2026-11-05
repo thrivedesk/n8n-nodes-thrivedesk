@@ -1,0 +1,69 @@
+{
+	"name": "n8n-nodes-thrivedesk",
+	"version": "0.1.0",
+	"description": "n8n community node for ThriveDesk — work with conversations and contacts, plus a trigger for ThriveDesk webhook events.",
+	"keywords": [
+		"n8n-community-node-package",
+		"n8n",
+		"thrivedesk",
+		"helpdesk",
+		"customer-support",
+		"conversations",
+		"webhook"
+	],
+	"license": "MIT",
+	"homepage": "https://github.com/thrivedesk/n8n-nodes-thrivedesk#readme",
+	"author": {
+		"name": "ThriveDesk",
+		"email": "support@thrivedesk.com",
+		"url": "https://thrivedesk.com"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/thrivedesk/n8n-nodes-thrivedesk.git"
+	},
+	"bugs": {
+		"url": "https://github.com/thrivedesk/n8n-nodes-thrivedesk/issues"
+	},
+	"engines": {
+		"node": ">=20.15"
+	},
+	"main": "index.js",
+	"scripts": {
+		"build": "n8n-node build",
+		"dev": "NODE_TLS_REJECT_UNAUTHORIZED=0 N8N_EDITOR_BASE_URL=http://localhost:5678/ WEBHOOK_URL=\"${WEBHOOK_URL:-http://localhost:5678/}\" N8N_WEBHOOK_URL=\"${WEBHOOK_URL:-http://localhost:5678/}\" n8n-node dev",
+		"dev:managed": "NODE_TLS_REJECT_UNAUTHORIZED=0 N8N_EDITOR_BASE_URL=http://localhost:5678/ WEBHOOK_URL=\"${WEBHOOK_URL:-http://localhost:5678/}\" N8N_WEBHOOK_URL=\"${WEBHOOK_URL:-http://localhost:5678/}\" CREDENTIALS_OVERWRITE_DATA_FILE=\"$PWD/.credentials-overwrite.local.json\" n8n-node dev",
+		"lint": "n8n-node lint",
+		"scan": "node scripts/scan-local.mjs",
+		"lint:fix": "n8n-node lint --fix",
+		"release": "n8n-node release",
+		"test": "jest",
+		"prepublishOnly": "npm run build"
+	},
+	"files": [
+		"dist"
+	],
+	"n8n": {
+		"n8nNodesApiVersion": 1,
+		"credentials": [
+			"dist/credentials/ThriveDeskOAuth2Api.credentials.js"
+		],
+		"nodes": [
+			"dist/nodes/ThriveDesk/ThriveDesk.node.js",
+			"dist/nodes/ThriveDeskTrigger/ThriveDeskTrigger.node.js"
+		]
+	},
+	"peerDependencies": {
+		"n8n-workflow": "*"
+	},
+	"devDependencies": {
+		"@n8n/node-cli": "^0.55.5",
+		"@types/jest": "^29.5.0",
+		"@types/node": "^20.0.0",
+		"eslint": "^9.0.0",
+		"jest": "^29.7.0",
+		"n8n-workflow": "*",
+		"ts-jest": "^29.2.0",
+		"typescript": "^5.5.0"
+	}
+}

@@ -1,0 +1,44 @@
+# Publishes to npm with provenance on every version tag push (official @n8n/node-cli template).
+# Verified community nodes MUST be published this way (mandatory since 2026-05-01).
+#
+# `npm run release` (local) bumps the version, commits, tags (e.g. 1.0.0, no "v") and pushes;
+# the tag push triggers this workflow, where `n8n-node release` detects CI and runs
+# lint → build → `npm publish` with NPM_CONFIG_PROVENANCE=true.
+#
+# Auth: npm Trusted Publisher (OIDC, recommended — leave NPM_TOKEN unset) or an NPM_TOKEN
+# repo secret (granular token, read+write on this package). See docs/RELEASE.md Phase 4.
+
+name: Publish
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+jobs:
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write # OIDC token for npm provenance / trusted publishing
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*' # npm >= 11.5 is needed for OIDC trusted publishing
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+
+      - run: npm ci
+      - run: npm test
+
+      - name: Release
+        run: |
+          [ -n "$NPM_TOKEN" ] && npm config set //registry.npmjs.org/:_authToken "$NPM_TOKEN"
+          npm run release
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
