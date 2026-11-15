@@ -4,7 +4,7 @@ This is an [n8n](https://n8n.io) community node. It lets you use [ThriveDesk](ht
 
 ThriveDesk is a help desk platform for managing customer conversations across shared inboxes, with contacts, tags, and saved replies.
 
-[Installation](#installation) · [Authentication](#authentication) · [Operations](#operations) · [Compatibility](#compatibility) · [Resources](#resources)
+[Installation](#installation) · [Authentication](#authentication) · [Operations](#operations) · [Usage](#usage) · [Compatibility](#compatibility) · [Resources](#resources)
 
 ## Installation
 
@@ -60,6 +60,72 @@ Fires when a subscribed ThriveDesk webhook event arrives:
 Each trigger is bound to one event **and** one inbox — there is no all-inboxes wildcard. Optional
 filters narrow it further, and are applied by the backend per event type: **assignee** on Created and
 Assigned, **status** on Created and Status Updated, **tags** on Created and Tags Updated.
+
+## Usage
+
+### Example: auto-acknowledge new conversations
+
+Send an automatic reply whenever a customer opens a new conversation in an inbox.
+
+**1. ThriveDesk Trigger**
+
+| Parameter | Value |
+|---|---|
+| Credential | your **ThriveDesk OAuth2 API** credential |
+| Event | `Conversation Created` |
+| Inbox | the inbox to watch, e.g. `Support` |
+| Filters → Status | *(optional)* `Active` |
+
+Publish the workflow — publishing is what subscribes the webhook in ThriveDesk. Each delivery is
+HMAC-signed and verified by the node; anything with a bad signature is rejected before downstream
+nodes run.
+
+Sample trigger output (abbreviated):
+
+```json
+{
+  "id": "01KZ8Q4V9N3M2X7Y5T1R0P6W4E",
+  "api_version": "2026-05-20",
+  "event": "conversation.created",
+  "timestamp": 1785996058,
+  "data": {
+    "object": "conversation",
+    "id": "a26f906a-50c1-4930-8a3d-7ee701053c57",
+    "ticket_id": 42,
+    "subject": "Can't log in to my account",
+    "status": "Active",
+    "priority": "Normal",
+    "inbox": { "...": "..." },
+    "contact": { "...": "..." },
+    "tags": [],
+    "last_message": { "...": "..." }
+  }
+}
+```
+
+**2. ThriveDesk** (action node)
+
+| Parameter | Value |
+|---|---|
+| Credential | same ThriveDesk credential |
+| Resource | `Conversation` |
+| Operation | `Reply` |
+| Conversation | **By ID** → `{{ $json.data.id }}` |
+| Message | `<p>Thanks for reaching out! We've received your message and will get back to you shortly.</p>` |
+| Status | `Pending` |
+| Additional Fields → Assignee | *(optional)* an agent to assign |
+
+Sample action output:
+
+```json
+{
+  "message": "OK",
+  "record_id": "a26f906a-50c1-4930-8a3d-7ee701053c57"
+}
+```
+
+Other combinations follow the same pattern — e.g. trigger on `conversation.contact_replied` and
+**Add Tag** or **Add Note**, or use **Contact → Create or Update** to sync contacts into a CRM.
 
 ## Compatibility
 
